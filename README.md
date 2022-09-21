@@ -11,6 +11,6 @@ How to set up library
 </ul>
 Note: may be occur error (tip: check file path or path folder contain file)
 
-<h5> If you have another error, please contact <b>ngocthien.dev23@gmail.com</b> and picture. We will support you to overcome problem </h5>
+<h5> If you have another error, please contact <b>ngocthien.dev23@gmail.com</b>. We will support you to overcome problem </h5>
 ### Thank you
 
