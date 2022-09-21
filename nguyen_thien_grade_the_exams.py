@@ -62,6 +62,47 @@ class TestGradeCalculator():
             return False
 
         return True
+    
+    # check invalid line
+    def check_format(self):
+        self.count_total_sample()
+        count_invalid = 0
+        # valid line 
+        arr_student = []
+        # invalid line
+        arr_invalid_student = []
+
+        for i in self.data_from_file:
+            # separate string by ","
+            sample = i.split(",")
+            check_length = self.validate_length_answer(sample)
+            check_student_id = self.validate_student_id(sample)
+
+            if check_length and check_student_id:
+                sample[25] = re.sub("\n", '', sample[25])
+                # add line data to list valid student
+                arr_student.append(sample)
+            else:
+                # add line data to list invalid student
+                arr_invalid_student.append(sample)
+                count_invalid += 1
+
+        print("**** REPORT ****\n")
+        print("Total valid lines of data: {} \n".format(self.total_sample - count_invalid))
+        print("Total invalid lines of data: {} \n".format(count_invalid))
+
+        self.arr_student = arr_student
+        self.arr_invalid_student = arr_invalid_student
+    
+        return count_invalid
+    
+    
+    # convert '' to NAN 
+    def processing_data(self):
+        for i in range(len(self.arr_student)):
+            for j in range(len(self.arr_student[i])):
+                if self.arr_student[i][j] == '':
+                    self.arr_student[i][j] = np.NAN
             
 #file_name = str(input("Enter a file name you want to statitic (i.e class1.txt): "))
 score_calculator = TestGradeCalculator("class2")
