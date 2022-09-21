@@ -13,6 +13,7 @@ class TestGradeCalculator():
         self.arr_invalid_student = None
         self.correct_answer = None
         self.dataFrame_student = None
+        self.total_valid = 0
     
     # open file
     def read_file(self):
@@ -108,13 +109,14 @@ class TestGradeCalculator():
                     arr_invalid_student.append(sample)
                     count_invalid += 1
 
-            print("**** REPORT ****\n")
-            print("Total valid lines of data: {} \n".format(self.total_sample - count_invalid))
-            print("Total invalid lines of data: {} \n".format(count_invalid))
-
             self.arr_student = arr_student
             self.arr_invalid_student = arr_invalid_student
-        
+            self.total_valid = self.total_sample - count_invalid
+
+            print("**** REPORT ****\n")
+            print("Total valid lines of data: {} \n".format(self.total_valid))
+            print("Total invalid lines of data: {} \n".format(count_invalid))
+
             return count_invalid
         except:
             print("Error System, please check check_format() function \n")
@@ -182,7 +184,8 @@ class TestGradeCalculator():
         
         for i in range(1, len(n_missing_value) - 1):
             if n_missing_value[i] == max_question_skip:
-                list_question_skip += str(i) + " - " + str(max_question_skip) + " - " + str((max_question_skip/25)) 
+                rate = max_question_skip/self.total_valid
+                list_question_skip += str(i) + " - " + str(max_question_skip) + " - {:.2f}".format(rate)  + ' , '
 
         print("The question that most people skip: ", list_question_skip +'\n')
 
@@ -212,40 +215,40 @@ class TestGradeCalculator():
         list_question_incorrect = ""
         for i in range(1, len(n_question_incorect) - 1):
             if n_question_incorect[i] == max_question_incorrect:
+                
+                rate = (max_question_incorrect/self.total_valid)
                 # set line data incorrect
-                list_question_incorrect += str(i) + " - " + str(max_question_incorrect) + " - " + str((max_question_incorrect/25)) 
+                list_question_incorrect += str(i) + " - " + str(max_question_incorrect) + " - {:.2f}".format(rate) + " , "
         print("\nThe question that most people answer incorrectly:", list_question_incorrect + "\n")
    
     # statistic data of student
     def statistic_list_student(self):
-        try:
-            # get the number of student higher score than 80
-            number_high_score = (self.dataFrame_student["score"] > 80).sum()
-            print("Total student have score higher than 80 is {} \n".format(number_high_score))
-            
-            avg_score = self.dataFrame_student['score'].mean()
-            max_score = self.dataFrame_student['score'].max()
-            min_score = self.dataFrame_student['score'].min()
-            domain_value_score = max_score - min_score
-            media_score = self.dataFrame_student['score'].median()
+        # get the number of student higher score than 80
+        number_high_score = (self.dataFrame_student["score"] > 80).sum()
+        print("Total student have score higher than 80 is {} \n".format(number_high_score))
+        
+        avg_score = self.dataFrame_student['score'].mean()
+        max_score = self.dataFrame_student['score'].max()
+        min_score = self.dataFrame_student['score'].min()
+        domain_value_score = max_score - min_score
+        media_score = self.dataFrame_student['score'].median()
 
-            print("Mean (average) score of list student is {:.2f} \n".format(avg_score))
-            print("Max score of list student is {} \n".format(max_score))
-            print("Min score of list student is {} \n".format(min_score))
-            print("Range of score is {} \n".format(domain_value_score))
-            print("Media score of list student is {} \n".format(media_score))
+        print("Mean (average) score of list student is {:.2f} \n".format(avg_score))
+        print("Max score of list student is {} \n".format(max_score))
+        print("Min score of list student is {} \n".format(min_score))
+        print("Range of score is {} \n".format(domain_value_score))
+        print("Media score of list student is {} \n".format(media_score))
 
-            new_list_student = self.dataFrame_student.drop([0, "score"], axis=1)
-            self.most_question_skip(new_list_student)
-            self.most_question_incorrect(new_list_student)
+        new_list_student = self.dataFrame_student.drop([0, "score"], axis=1)
+        self.most_question_skip(new_list_student)
+        self.most_question_incorrect(new_list_student)
 
 
-            print("------- LIST STUDENT ------- \n")
-            # analysis data
-            print(self.dataFrame_student)
-            print(self.dataFrame_student.describe())
-        except:
-            print("Error System, please check statistic_list_student() fucntion \n")
+        print("------- LIST STUDENT ------- \n")
+        # analysis data
+        print(self.dataFrame_student)
+        print(self.dataFrame_student.describe())
+
 
 
 
@@ -254,13 +257,18 @@ class TestGradeCalculator():
         try:
             keys = self.dataFrame_student.keys()
             df_score = self.dataFrame_student.drop(keys[1:26], axis=1)
-
-            with open('Result/' + self.filename + '_grades.txt', "w") as file:
+            path_full_txt = 'Result/' + self.filename + '_grades.txt'
+            with open(path_full_txt, "w") as file:
                 for score in df_score.values:
                     write_score = score[0] + "," + str(score[1]) + '\n'
                     file.writelines(write_score)
+                print("\nSave file " + path_full_txt + " successfull\n")
                 file.truncate()
-                file.close()
+                file.close() 
+            path_full_csv = "Data/" + self.filename + '.csv'
+            self.dataFrame_student.to_csv(path_full_csv)
+            print("\nSave file " + path_full_csv + " successfull\n")
+
         except:
             print("Error System, please check print_result_score() fucntion \n")
             
@@ -289,11 +297,10 @@ def main(file_name):
 
 if __name__ == "__main__":
     while True:
-        print("Fill q to quit program \n")
-        file_name = str(input("\nEnter a file name you want to statitic (i.e class1): "))
+        print("\nFill q to quit program \n")
+        file_name = str(input("Enter a file name you want to statitic (i.e class1): "))
         if file_name == "q":
             print("Exited program\ns")
             break
         main(file_name)
         print(">>> ================================ RESTART ================================")
-
