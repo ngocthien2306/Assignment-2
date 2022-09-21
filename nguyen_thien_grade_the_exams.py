@@ -127,6 +127,66 @@ class TestGradeCalculator():
         list_student["score"] = scores
         self.dataFrame_student = list_student
         return list_student
+    
+    # print the question that most people skip
+    def most_question_skip(self, new_dataFrame):
+        
+        # count the number of question that student skip
+        n_missing_value = new_dataFrame.isna().sum()
+        # count the number of question that student answered 
+        n_not_missing_value = new_dataFrame.notna().sum()
+        # calculating percentage of question skip
+        percent_missing_value = (n_missing_value / n_not_missing_value )*100
+        # create skip question DataFrame
+        missing_data = pd.concat([n_missing_value, percent_missing_value], keys=['Null Count','Null Percentage'], axis=1)
+      
+        show_graph = str(input("Show statistic the question that most people skip (y or n):"))
+        # visualize data
+        if show_graph == "y":
+            plt.figure(figsize=(12, 7))
+            missing_data["Null Count"].plot(kind="bar")
+            plt.title("List answer skip: " + str(self.filename))
+            plt.ylabel("n_missing")
+            plt.xlabel("question")
+            plt.savefig("Images/" + self.filename + '_skip.png')
+            plt.show()
+
+        max_question_skip = max(n_missing_value)
+        list_question_skip = ""
+        
+        for i in range(1, len(n_missing_value) - 1):
+            if n_missing_value[i] == max_question_skip:
+                list_question_skip += str(i) + " - " + str(max_question_skip) + " - " + str((max_question_skip/25)) + ' , '
+
+        print("The question that most people skip: ", list_question_skip +'\n')
+
+    # print question that most student answer incorrectly
+    def most_question_incorrect(self, new_dataFrame):
+        n_missing_value = new_dataFrame.isna().sum()
+        check_question = ((new_dataFrame != np.array(self.correct_answer.split(",")))).sum()
+        n_question_correct = ((new_dataFrame == np.array(self.correct_answer.split(",")))).sum()
+        n_question_incorect = check_question - n_missing_value
+
+        list_question = pd.concat([n_question_correct, n_question_incorect], keys=['Correct Count','Incorrect Count'], axis=1)
+
+
+        # visualize data
+        show_graph = str(input("Show statistic the question that most people skip (y or n):"))
+        if show_graph == "y":
+            plt.figure(figsize=(12, 7))
+            list_question["Correct Count"].plot(kind="bar")
+            plt.title("The number of question correct: " + str(self.filename))
+            plt.ylabel("n_correct")
+            plt.xlabel("question")
+            plt.savefig("Images/" + self.filename + '_correct.png')
+            plt.show()
+
+        max_question_incorrect = max(n_question_incorect)
+        list_question_incorrect = ""
+        for i in range(1, len(n_question_incorect) - 1):
+            if n_question_incorect[i] == max_question_incorrect:
+                list_question_incorrect += str(i) + " - " + str(max_question_incorrect) + " - " + str((max_question_incorrect/25)) + ' , '
+        print("The question that most people answer incorrectly:", list_question_incorrect + "\n")
             
 #file_name = str(input("Enter a file name you want to statitic (i.e class1.txt): "))
 score_calculator = TestGradeCalculator("class2")
