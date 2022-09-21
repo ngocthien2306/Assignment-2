@@ -50,6 +50,12 @@ class TestGradeCalculator():
                 print(sample, '\n')
                 return False
             
+           # check the amount of character after N
+            elif any(c.isalpha() for c in sample[0][1:]):
+                print("Line data is invalid: N# incorrect format \n")
+                print(sample, '\n')
+                return False
+            
         elif "N" not in sample[0]:
             print("Line data is invalid, because data not contain N\n")
             print(sample, '\n')
@@ -60,3 +66,9 @@ class TestGradeCalculator():
 #file_name = str(input("Enter a file name you want to statitic (i.e class1.txt): "))
 score_calculator = TestGradeCalculator("class2")
 score_calculator.read_file()
+count_invalid = score_calculator.check_format()
+print("**** ANALYZING ****\n")
+if count_invalid == 0:
+    print("No errors found!\n")
+else:
+    print("Some lines are invalid\n")
