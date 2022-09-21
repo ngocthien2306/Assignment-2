@@ -103,6 +103,30 @@ class TestGradeCalculator():
             for j in range(len(self.arr_student[i])):
                 if self.arr_student[i][j] == '':
                     self.arr_student[i][j] = np.NAN
+                    
+    # grading exams for each student, except for student invalid
+    def calculating_score(self, correct_answer):
+        self.correct_answer = correct_answer
+        arr_correct_answer = np.array(correct_answer.split(','))
+        scores = []
+        for answers in self.arr_student:
+            answers = answers[1:]
+            score = 0
+            for i in range(len(answers)):
+                if answers[i] == arr_correct_answer[i]:
+                    score += 4
+                elif answers[i] == '':
+                    pass
+                else:
+                    score -= 1
+            scores.append(score)
+        self.processing_data()
+
+        # create DataFrame to analysis 
+        list_student = pd.DataFrame(self.arr_student)
+        list_student["score"] = scores
+        self.dataFrame_student = list_student
+        return list_student
             
 #file_name = str(input("Enter a file name you want to statitic (i.e class1.txt): "))
 score_calculator = TestGradeCalculator("class2")
@@ -113,3 +137,5 @@ if count_invalid == 0:
     print("No errors found!\n")
 else:
     print("Some lines are invalid\n")
+answer_key = "B,A,D,D,C,B,D,A,C,C,D,B,A,B,A,C,B,D,A,C,A,A,B,D,D"
+score_calculator.calculating_score(answer_key)
