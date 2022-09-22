@@ -187,7 +187,7 @@ class TestGradeCalculator():
                 rate = max_question_skip/self.total_valid
                 list_question_skip += str(i) + " - " + str(max_question_skip) + " - {:.2f}".format(rate)  + ' , '
 
-        print("The question that most people skip: ", list_question_skip +'\n')
+        print("\nThe question that most people skip: ", list_question_skip +'\n')
 
     # print question that most student answer incorrectly
     def most_question_incorrect(self, new_dataFrame):
@@ -219,7 +219,7 @@ class TestGradeCalculator():
                 rate = (max_question_incorrect/self.total_valid)
                 # set line data incorrect
                 list_question_incorrect += str(i) + " - " + str(max_question_incorrect) + " - {:.2f}".format(rate) + " , "
-        print("\nThe question that most people answer incorrectly:", list_question_incorrect + "\n")
+        print("The question that most people answer incorrectly:", list_question_incorrect + "\n")
    
     # statistic data of student
     def statistic_list_student(self):
@@ -300,7 +300,7 @@ if __name__ == "__main__":
         print("\nFill q to quit program \n")
         file_name = str(input("Enter a file name you want to statitic (i.e class1): "))
         if file_name == "q":
-            print("Exited program\ns")
+            print("Exited program\n")
             break
         main(file_name)
-        print(">>> ================================ RESTART ================================")
+        print("\n>>> ================================ RESTART ================================")
